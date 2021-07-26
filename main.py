@@ -32,3 +32,15 @@ search_term = "ENTER THE DESIRED PRODUCT/ITEM" #e.g. Box Logo
 style = "ENTER THE DESIRED PRODUCT/ITEM'S COLOR" #e.g. White
 #LIST OF ITEMS IN THE T-SHIRT CATEGORY.
 items = driver.find_elements_by_css_selector('li a.name-link')
+
+'''
+LOOP THROUGH EACH ITEM IN THE ITEMS LIST AND IF THE SEARCH_ITEM(DESIRED PRODUCT) MATCHES THE ITEM IN THE FOR LOOP,
+THEN THAT SPECIFIC ITEM WILL BE CLICKED AND WOULD CALL THE WAIT_FOR_SELECTORS() FUNCTION TO ACCESS THE SPECIFIC COLOR
+OF THE ITEM SELECTED AND SELECTS THE SIZE(e.g. small).
+'''
+for item in items:
+    if search_term in item.text:
+        item.click()
+        color = wait_for_selectors(f"ul li button[data-style-name={style}]")
+        color[0].click()
+        size = driver.find_element_by_css_selector('fieldset select#s option')
