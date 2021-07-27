@@ -114,3 +114,9 @@ for item in items:
             select_year.select_by_value('ENTER CARD INFO')                     #CHANGE
             cvv = billing_info('//*[@id="orcer"]').send_keys('ENTER CARD INFO')  #CHANGE
             agree = billing_info('//*[@id="terms-checkbox"]/label/div/ins').click()
+
+            # SUBMIT ORDER
+            submit = billing_info('//*[@id="pay"]/input').click()
+
+        else:
+            print('Size SMALL is not sold out!')
