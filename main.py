@@ -53,6 +53,12 @@ def check_out_now(css_selector):
         time.sleep(0.2)
     return element
 
+
+def billing_info(xpath):
+    info = driver.find_element_by_xpath(xpath)
+    return info
+
+
 search_term = "ENTER THE DESIRED PRODUCT/ITEM" #e.g. Box Logo
 style = "ENTER THE DESIRED PRODUCT/ITEM'S COLOR" #e.g. White
 #LIST OF ITEMS IN THE T-SHIRT CATEGORY.
@@ -92,3 +98,19 @@ for item in items:
                 checkout.click()
             except (StaleElementReferenceException, NoSuchElementException, ElementNotInteractableException) as error:
                 time.sleep(0.0001)
+
+
+            #ENTER BILLING INFORMATION
+            name = billing_info('//*[@id="order_billing_name"]').send_keys('ENTER NAME') #CHANGE
+            email = billing_info('//*[@id="order_email"]').send_keys('ENTER EMAIL') #CHANGE
+            phone_num = billing_info('//*[@id="order_tel"]').send_keys('ENTER PHONE') #CHANGE
+            address = billing_info('//*[@id="bo"]').send_keys('ENTER ADDRESS') #CHANGE
+            zip_code = billing_info('//*[@id="order_billing_zip"]').send_keys('ENTER ZIP CODE') #CHANGE
+            city = billing_info('//*[@id="order_billing_city"]').send_keys('ENTER CITY') #CHANGE
+            billing_info('//*[@id="rnsnckrn"]').send_keys('ENTER CARD INFOR') #CHANGE
+            select_month = Select(billing_info('//*[@id="credit_card_month"]'))
+            select_month.select_by_value('ENTER CARD INFO')                      #CHANGE
+            select_year = Select(billing_info('//*[@id="credit_card_year"]'))
+            select_year.select_by_value('ENTER CARD INFO')                     #CHANGE
+            cvv = billing_info('//*[@id="orcer"]').send_keys('ENTER CARD INFO')  #CHANGE
+            agree = billing_info('//*[@id="terms-checkbox"]/label/div/ins').click()
