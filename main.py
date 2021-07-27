@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.webdriver.support.ui import Select
+from selenium.common.exceptions import StaleElementReferenceException, NoSuchElementException, ElementNotInteractableException
 import time
 
 chrome_driver_path = "ENTER OWN CHROMEDRIVER PATH"
@@ -17,7 +19,7 @@ tops.click()
 time.sleep(1)
 
 '''
-THIS FUNCTION WILL RUN A WHILE LOOP BY LOOKING AT THE CSS_SELECTOR AS A PARAMETER, ONCE IT FINDS THAT SPECIFIC
+THIS FUNCTION WILL RUN A WHILE LOOP BY FINDING CSS_SELECTOR (PARAMETER), ONCE IT FINDS THAT SPECIFIC
 CSS SELECTOR, THEN IT WILL ADD IT TO THE ELEMENT LIST AND RETURNS THE ELEMENT.
 '''
 def wait_for_selectors(css_selector):
@@ -28,6 +30,18 @@ def wait_for_selectors(css_selector):
     return elements
 
 
+'''
+THIS FUNCTION WILL RUN A WHILE LOOP IF ELEMENT IS NONE BY FINDING CSS_SELECTOR (PARAMETER), ONCE IT FINDS THAT SPECIFIC
+CSS SELECTOR, THEN IT WILL UPDATE THE ELEMENT VARIABLE AND RETURNS THE ELEMENT.
+'''
+def add_to_cart(css_selector):
+    element = None
+    while element is None:
+        element = driver.find_element_by_css_selector(css_selector)
+        time.sleep(0.00001)
+    return element
+
+
 search_term = "ENTER THE DESIRED PRODUCT/ITEM" #e.g. Box Logo
 style = "ENTER THE DESIRED PRODUCT/ITEM'S COLOR" #e.g. White
 #LIST OF ITEMS IN THE T-SHIRT CATEGORY.
@@ -35,7 +49,7 @@ items = driver.find_elements_by_css_selector('li a.name-link')
 
 '''
 LOOP THROUGH EACH ITEM IN THE ITEMS LIST AND IF THE SEARCH_ITEM(DESIRED PRODUCT) MATCHES THE ITEM IN THE FOR LOOP,
-THEN THAT SPECIFIC ITEM WILL BE CLICKED AND WOULD CALL THE WAIT_FOR_SELECTORS() FUNCTION TO ACCESS THE SPECIFIC COLOR
+THEN THAT SPECIFIC ITEM WILL BE CLICKED AND WOULD CALL THE WAIT_FOR_SELECTORS(STYLE) FUNCTION TO ACCESS THE SPECIFIC COLOR
 OF THE ITEM SELECTED AND SELECTS THE SIZE(e.g. small).
 '''
 for item in items:
@@ -44,3 +58,14 @@ for item in items:
         color = wait_for_selectors(f"ul li button[data-style-name={style}]")
         color[0].click()
         size = driver.find_element_by_css_selector('fieldset select#s option')
+
+        '''IF THE SIZE IS AVAILABLE, THEN WILL IT TRY TO CLICK ADD TO CART BUTTON, IF THE ADD TO CART BUTTON IS GRAYED
+        OUT, THEN THAT MEANS THAT SPECIFIC SIZE IS SOLD OUT. HOWEVER, IN SUPREME WEBSITE, IF A SPECIFIC SIZE IS SOLD
+        OUT FOR INSTANCE SIZE SMALL, THE DEFAULT OPTION WILL UNTO THE NEXT AVAILABLE SIZE. SINCE THIS IS SUPREME, AS
+        LONG AS WE SECURE THAT ITEM, WE WANT TO GET THE NEXT BEST AVAILABLE SIZE.'''
+        if size.text == "Small":
+            try:
+                add = add_to_cart('fieldset input.button')
+                add.click()
+            except (StaleElementReferenceException, NoSuchElementException, ElementNotInteractableException) as error:
+                time.sleep(0.0001)
