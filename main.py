@@ -42,6 +42,17 @@ def add_to_cart(css_selector):
     return element
 
 
+'''
+THIS FUNCTION WILL RUN A WHILE LOOP IF ELEMENT IS NONE BY FINDING CSS_SELECTOR (PARAMETER), ONCE IT FINDS THAT SPECIFIC
+CSS SELECTOR, THEN IT WILL UPDATE THE ELEMENT VARIABLE AND RETURNS THE ELEMENT.
+'''
+def check_out_now(css_selector):
+    element = None
+    while element is None:
+        element = driver.find_element_by_css_selector(css_selector)
+        time.sleep(0.2)
+    return element
+
 search_term = "ENTER THE DESIRED PRODUCT/ITEM" #e.g. Box Logo
 style = "ENTER THE DESIRED PRODUCT/ITEM'S COLOR" #e.g. White
 #LIST OF ITEMS IN THE T-SHIRT CATEGORY.
@@ -62,10 +73,22 @@ for item in items:
         '''IF THE SIZE IS AVAILABLE, THEN WILL IT TRY TO CLICK ADD TO CART BUTTON, IF THE ADD TO CART BUTTON IS GRAYED
         OUT, THEN THAT MEANS THAT SPECIFIC SIZE IS SOLD OUT. HOWEVER, IN SUPREME WEBSITE, IF A SPECIFIC SIZE IS SOLD
         OUT FOR INSTANCE SIZE SMALL, THE DEFAULT OPTION WILL UNTO THE NEXT AVAILABLE SIZE. SINCE THIS IS SUPREME, AS
-        LONG AS WE SECURE THAT ITEM, WE WANT TO GET THE NEXT BEST AVAILABLE SIZE.'''
+        LONG AS WE SECURE THAT ITEM, WE WANT TO GET THE NEXT BEST AVAILABLE SIZE. 
+        ***NOTE: SOMETIMES THE PAGE HAVE A DELAY, THEREFORE, IT IS BEST TO ADD A SLEEPER TO KEEP 
+        LOOKING FOR THAT BUTTON..
+        '''
         if size.text == "Small":
             try:
                 add = add_to_cart('fieldset input.button')
                 add.click()
+            except (StaleElementReferenceException, NoSuchElementException, ElementNotInteractableException) as error:
+                time.sleep(0.0001)
+            '''
+            ONCE THE SELECTED SIZE IS ADDED TO THE CART, IT WILL CLICK THE CHECK OUT NOW BUTTON. SOMETIMES THE PAGE
+            HAVE A DELAY, THEREFORE, IT IS BEST TO ADD A SLEEPER TO KEEP LOOKING FOR THAT BUTTON.
+            '''
+            try:
+                checkout = check_out_now('div a.button.checkout')
+                checkout.click()
             except (StaleElementReferenceException, NoSuchElementException, ElementNotInteractableException) as error:
                 time.sleep(0.0001)
